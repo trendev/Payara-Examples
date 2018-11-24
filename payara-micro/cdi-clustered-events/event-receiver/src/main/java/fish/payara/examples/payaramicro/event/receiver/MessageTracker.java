@@ -52,6 +52,8 @@ public class MessageTracker implements Serializable {
     }
 
     public void add(CustomMessage message) {
+        Logger.getLogger(this.getClass().getName()).info(
+                "ADDING " + message.getMessage());
         this.messagesReceived.add(message);
     }
 
