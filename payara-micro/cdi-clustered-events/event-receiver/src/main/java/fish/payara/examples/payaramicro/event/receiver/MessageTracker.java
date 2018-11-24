@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Singleton;
 
 /**
  *
@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
  */
 @Clustered(callPostConstructOnAttach = false, callPreDestoyOnDetach = false,
         lock = DistributedLockType.LOCK, keyName = "messageTracker")
-@ApplicationScoped
+@Singleton
 public class MessageTracker implements Serializable {
 
     private List<CustomMessage> messagesReceived;
@@ -54,6 +54,9 @@ public class MessageTracker implements Serializable {
     public void add(CustomMessage message) {
         Logger.getLogger(this.getClass().getName()).info(
                 "ADDING " + message.getMessage());
+        if (this.messagesReceived == null) {
+            messagesReceived = new LinkedList<>();
+        }
         this.messagesReceived.add(message);
     }
 

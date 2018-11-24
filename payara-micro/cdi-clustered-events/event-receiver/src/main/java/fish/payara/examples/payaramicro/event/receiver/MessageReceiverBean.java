@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
@@ -33,7 +33,7 @@ import javax.json.bind.JsonbBuilder;
  *
  * @author steve
  */
-@ApplicationScoped
+@Singleton
 public class MessageReceiverBean {
 
     @Inject
