@@ -18,6 +18,7 @@
 package fish.payara.examples.payaramicro.eventdata;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  *
@@ -83,6 +84,39 @@ public class CustomMessage implements Serializable {
      */
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.message);
+        hash = 89 * hash + Objects.hashCode(this.sender);
+        hash = 89 * hash + (int) (this.timeStamp ^ (this.timeStamp >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CustomMessage other = (CustomMessage) obj;
+        if (this.timeStamp != other.timeStamp) {
+            return false;
+        }
+        if (!Objects.equals(this.message, other.message)) {
+            return false;
+        }
+        if (!Objects.equals(this.sender, other.sender)) {
+            return false;
+        }
+        return true;
     }
 
 }
