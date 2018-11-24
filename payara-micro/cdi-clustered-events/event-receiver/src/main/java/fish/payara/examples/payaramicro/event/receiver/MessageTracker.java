@@ -9,8 +9,8 @@ import fish.payara.cluster.Clustered;
 import fish.payara.cluster.DistributedLockType;
 import fish.payara.examples.payaramicro.eventdata.CustomMessage;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -26,14 +26,13 @@ import javax.ejb.Singleton;
 @Singleton
 public class MessageTracker implements Serializable {
 
-    private List<CustomMessage> messagesReceived;
+    private Collection<CustomMessage> messagesReceived = new HashSet<>();
 
     private String uuid;
 
     @PostConstruct
     public void init() {
         uuid = UUID.randomUUID().toString();
-        messagesReceived = new LinkedList<>();
         Logger.getLogger(this.getClass().getName()).info(
                 "MessageTracker initialised");
         Logger.getLogger(this.getClass().getName()).warning(
@@ -47,16 +46,13 @@ public class MessageTracker implements Serializable {
                 "STOPING " + uuid + "  - CLUSTER");
     }
 
-    public List<CustomMessage> getMessagesReceived() {
+    public Collection<CustomMessage> getMessagesReceived() {
         return messagesReceived;
     }
 
     public void add(CustomMessage message) {
         Logger.getLogger(this.getClass().getName()).info(
                 "ADDING " + message.getMessage());
-        if (this.messagesReceived == null) {
-            messagesReceived = new LinkedList<>();
-        }
         this.messagesReceived.add(message);
     }
 

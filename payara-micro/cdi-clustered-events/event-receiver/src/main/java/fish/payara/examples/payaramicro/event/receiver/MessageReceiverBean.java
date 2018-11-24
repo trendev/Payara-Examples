@@ -19,7 +19,7 @@ package fish.payara.examples.payaramicro.event.receiver;
 
 import fish.payara.examples.payaramicro.eventdata.CustomMessage;
 import fish.payara.micro.cdi.Inbound;
-import java.util.List;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -59,7 +59,7 @@ public class MessageReceiverBean {
                 CustomMessage.class));
     }
 
-    public List<CustomMessage> getMessagesReceived() {
+    public Collection<CustomMessage> getMessagesReceived() {
         return messageTracker.getMessagesReceived();
     }
 

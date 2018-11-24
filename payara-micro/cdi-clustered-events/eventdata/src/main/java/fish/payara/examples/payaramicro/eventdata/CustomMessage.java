@@ -25,8 +25,6 @@ import java.io.Serializable;
  */
 public class CustomMessage implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     public CustomMessage(String message, String sender) {
         if (message != null && !message.isEmpty()) {
             this.message = message;
