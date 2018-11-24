@@ -41,7 +41,7 @@ public class EventsServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        theBean.init();
+//        theBean.init();
     }
 
     /**
