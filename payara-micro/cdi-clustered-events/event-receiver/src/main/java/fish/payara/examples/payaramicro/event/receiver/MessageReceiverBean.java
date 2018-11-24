@@ -17,15 +17,21 @@
  */
 package fish.payara.examples.payaramicro.event.receiver;
 
+import fish.payara.cluster.Clustered;
+import fish.payara.cluster.DistributedLockType;
 import fish.payara.examples.payaramicro.eventdata.CustomMessage;
 import fish.payara.micro.cdi.Inbound;
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
 
 /**
@@ -34,16 +40,14 @@ import javax.json.bind.JsonbBuilder;
  * @author steve
  */
 @Singleton
-public class MessageReceiverBean {
+@Startup
+@Clustered(callPostConstructOnAttach = false, callPreDestoyOnDetach = false,
+        lock = DistributedLockType.LOCK, keyName = "messageTracker")
+public class MessageReceiverBean implements Serializable {
 
-    @Inject
-    MessageTracker messageTracker;
+    private Collection<CustomMessage> messagesReceived = new HashSet<>();
 
-    @PostConstruct
-    public void init() {
-        Logger.getLogger(this.getClass().getName()).info(
-                "MessageReceiverBean initialized");
-    }
+    private String uuid = UUID.randomUUID().toString();
 
     /**
      * Observer method that receives events Inbound from the cluster to the
@@ -55,12 +59,27 @@ public class MessageReceiverBean {
             @Observes @Inbound(eventName = "NewCustomMessage") /*@NewCustomMessage*/ String event) {
         Logger.getLogger(this.getClass().getName()).log(Level.INFO,
                 "MessageReceiverBean Received Event {0}", event);
-        messageTracker.add(JsonbBuilder.create().fromJson(event,
+        messagesReceived.add(JsonbBuilder.create().fromJson(event,
                 CustomMessage.class));
     }
 
+    @PostConstruct
+    public void init() {
+        Logger.getLogger(this.getClass().getName()).info(
+                "MessageTracker initialised");
+        Logger.getLogger(this.getClass().getName()).warning(
+                "##################### STARTING " + uuid
+                + "  - CLUSTER #####################");
+    }
+
+    @PreDestroy
+    public void clean() {
+        Logger.getLogger(this.getClass().getName()).warning(
+                "STOPING " + uuid + "  - CLUSTER");
+    }
+
     public Collection<CustomMessage> getMessagesReceived() {
-        return messageTracker.getMessagesReceived();
+        return messagesReceived;
     }
 
 }
